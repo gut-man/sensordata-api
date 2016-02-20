@@ -5,7 +5,8 @@ var bodyParser = require('body-parser');
 var config = require('./config.js');
 
 var Thing = require('./models/thing.js');
-var Temperatur = require('./models/temperatur.js');
+var Sensor = require('./models/sensor.js');
+var Temperature = require('./models/temperature.js');
 var Gyro = require('./models/gyro.js');
 
 mongoose.connect('mongodb://localhost:20937/sensordata', config.mongodb);
@@ -18,11 +19,16 @@ app.use(bodyParser.json());
 app.get('/', function (req, res) {
 
   var endpoints = [
-            {"url":"/things","method":"GET","description":"get all Things"},
-            {"url":"/things","method":"POST","description":"create new Things"},
-            {"url":"/things/{ObjectId}","method":"GET","description":"get one Thing"},
-            {"url":"/things/{ObjectId}","method":"PUT","description":"update existing Thing"},
-            {"url":"/things/{ObjectID}","method":"DELETE","description":"delete existing Thing"},
+            {"url":"/things","method":"GET","description":"receive all Things"},
+
+            {"url":"/things","method":"POST","description":"create Thing"},
+            {"url":"/things/{ThingID}","method":"GET","description":"receive Thing"},
+            {"url":"/things/{ThingID}","method":"PUT","description":"update Thing"},
+            {"url":"/things/{ThingID}","method":"DELETE","description":"delete Thing"},
+
+            {"url":"/things/{ThingID}/{SensorType}","method":"POST","description":"create Sensordata of a Thing"},
+            {"url":"/things/{ThingID}/{SensorType}","method":"GET","description":"receive Sensordata of a Thing"},
+
             {"url":"/sensors/temperatures","method":"GET","description":"get all Temperature Values"},
             {"url":"/sensors/temperatures","method":"POST","description":"create new Temperature Value"},
             {"url":"/sensors/temperatures/{ObjectId}","method":"PUT","description":"update Temperature Value"},
@@ -95,13 +101,42 @@ app.delete('/things/:_id', function (req, res){
   });
 });
 
+// CRUD for Temperatures
+
+
+
 // get Sensor Data of a Thing
-app.get('/things/:_id/:_sensor'), function(req, res){
+
+app.get('/things/:_id/temperature', function(req, res){
+            res.json("docs");
+
+});
+
+app.post('/things/:_id/:_sensor', function(req, res){
   if(req.params._sensor == "temperatures"){
-      Temperatur.find({'thing_id': req.params._id}, function (err, docs){
+    var doc = new Temperature();
+
+    doc.thing_id = req.params._id;
+    doc.sensor_id = req.body.sensor_id;
+    doc.value = req.body.value;
+
+    doc.save(function(err){
+      if (err)
+          res.send(err)
+      else
+        res.json(doc);
+    })
+  }
+})
+
+
+
+app.get('/things/:_id/:_sensor', function(req, res){
+  if(req.params._sensor == "temperatures"){
+      Temperature.find({'thing_id': req.params._id}, function (err, docs){
           if(err)
             res.send(err);
-
+          else
             res.json(docs);
       });
   }
@@ -114,7 +149,7 @@ app.get('/things/:_id/:_sensor'), function(req, res){
       });
 
   }
-}
+});
 
 var server = app.listen(config.app.port, function (err) {
   if (err)
