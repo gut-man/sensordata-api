@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
 
 var temperaturSchema = new mongoose.Schema({
 	thing_id: ThingId,
-	sensor_id: int,
-	value: float,
+	sensor_id: Number,
+	value: Number,
 	date: { type: Date, default: Date.now },
 })
 
