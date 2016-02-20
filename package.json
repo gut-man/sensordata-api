@@ -6,6 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Manuel Guttenberger",
-  "license": "ISC"
+  "repository":{
+  	"type" : "git",
+  	"url" : "git+https://github.com/gut-man/sensordata-api.git"
+  },
+  "dependencies":{
+    "express" : ">=4.13.0",
+    "mongoose" : ">=4.4.0",
+    "body-parser" : ">=1.15.0",
+  },
+  "author": "Manuel Guttenberger"
 }
