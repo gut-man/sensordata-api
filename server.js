@@ -9,7 +9,7 @@ var Sensor = require('./models/sensor.js');
 var Temperature = require('./models/temperature.js');
 var Gyro = require('./models/gyro.js');
 
-mongoose.connect('mongodb://localhost:20937/sensordata', config.mongodb);
+mongoose.connect("mongodb://" + config.mongodb.host + ":" + config.mongodb.port + "/" + config.mongodb.database, config.mongodb);
 
 var app = express();
 
@@ -46,8 +46,10 @@ app.get('/things', function (req, res){
   Thing.find(function(err, docs) {
     if (err)
       res.send(err);
-    else
+    else{
+    res.status(200);
     res.json(docs);
+    }
   });
 });
 
